@@ -4,16 +4,16 @@ from sqlalchemy import create_engine, text
 import time
 import re
 import logging
-import sqlite3  # <-- 1. THIS IMPORT IS NEW
+import sqlite3  
 
-# --- Configuration ---
-API_KEY = "2d16b56"  # Your activated key
+
+API_KEY = "2d16b56"  
 DB_URL = "sqlite:///movies.db"
 engine = create_engine(DB_URL)
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# --- Helper Functions ---
+
 def extract_year_from_title(title):
     """Extracts the release year from a MovieLens title (e.g., 'Toy Story (1995)')"""
     match = re.search(r'\((\d{4})\)$', title)
@@ -73,7 +73,7 @@ all_genres = set()
 movie_genres_list = []
 
 logging.info(f"Enriching {len(movies_df)} movies from OMDb...")
-movies_df = movies_df.head(500) # Process a sample of 500
+movies_df = movies_df.head(500) 
 logging.info(f"Processing a sample of {len(movies_df)} movies to stay under API limits.")
 
 for _, row in movies_df.iterrows():
@@ -115,14 +115,11 @@ ratings_df['rated_at'] = pd.to_datetime(ratings_df['timestamp'], unit='s')
 ratings_df = ratings_df.rename(columns={'userId': 'user_id', 'movieId': 'movie_id'})
 final_ratings_df = ratings_df[['user_id', 'movie_id', 'rating', 'rated_at']]
 
-# --- LOAD ---
-# 2. THIS ENTIRE LOAD BLOCK IS MODIFIED
+
 logging.info("Starting LOAD phase...")
 
-# 1. Apply schema using sqlite3.executescript()
-# This fixes the "You can only execute one statement at a time" warning.
 try:
-    db_path = DB_URL.replace("sqlite:///", "") # Get 'movies.db' from the URL
+    db_path = DB_URL.replace("sqlite:///", "") # Getting 'movies.db' from the URL
     with open("schema.sql", 'r') as f:
         schema_script = f.read()
     
@@ -133,7 +130,7 @@ try:
     logging.info("Database schema applied.")
 except Exception as e:
     logging.error(f"Failed to apply schema: {e}")
-    exit() # Stop if schema fails
+    exit() 
 
 # 2. Load data using pandas and SQLAlchemy engine
 try:
@@ -146,7 +143,6 @@ try:
     final_movie_genres_df.to_sql("movie_genres", con=engine, if_exists="append", index=False)
     logging.info(f"Loaded {len(final_movie_genres_df)} records into 'movie_genres'.")
 
-    # Filter ratings to only include movies we actually processed
     processed_movie_ids = final_movies_df['movie_id'].unique()
     final_ratings_df = final_ratings_df[final_ratings_df['movie_id'].isin(processed_movie_ids)]
     

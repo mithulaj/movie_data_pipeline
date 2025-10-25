@@ -1,5 +1,4 @@
 -- 1. Movie with the highest average rating
--- (Added a HAVING clause for a more meaningful result)
 SELECT
     m.title,
     AVG(r.rating) AS avg_rating,
@@ -7,12 +6,11 @@ SELECT
 FROM movies m
 JOIN ratings r ON m.movie_id = r.movie_id
 GROUP BY m.movie_id, m.title
-HAVING COUNT(r.rating) > 10 -- Avoid movies with only one 5-star rating
+HAVING COUNT(r.rating) > 10 
 ORDER BY avg_rating DESC
 LIMIT 1;
 
 -- 2. Top 5 genres with highest average rating
--- (This query is now correct, thanks to the normalized schema)
 SELECT
     g.name AS genre,
     AVG(r.rating) AS avg_rating,
