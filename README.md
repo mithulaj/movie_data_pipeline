@@ -37,17 +37,17 @@ Open the SQLite shell:Execute queries from queries.sql to analyze the data.
 
 # Design Choices
 
-Database:
+**Database**
 I chose SQLite because it’s serverless and file-based, making the project easy to set up and run without any external database server.
 
-Data Model:
+**Data Model**
 The data model includes:
 A genres table
 A movie_genres joining table
 This structure correctly handles the one-to-many relationship (one movie can have multiple genres).
 It’s far more efficient for querying than storing genres as a single text string.
 
-API Matching:
+**API Matching**
 The OMDb API was unreliable when using the full MovieLens title (e.g., "Toy Story (1995)").
 To improve accuracy:
 I used a regular expression to extract the clean title ("Toy Story") and year ("1995").
@@ -59,10 +59,10 @@ The script assumes movies.csv and ratings.csv are located in the same root direc
 
 # Challenges Faced
 
-API Rate Limits:
+**API Rate Limits**
 The free OMDb API has a daily request limit.
 Because the full MovieLens dataset contains 9,000+ movies, this poses a challenge for large-scale API queries.
 
-SQL Execution Error:
+**SQL Execution Error**
 The SQLAlchemy library could not execute the entire schema.sql file at once because it contains multiple CREATE and DROP statements.
 This required executing statements individually or modifying the script to handle them sequentially.
